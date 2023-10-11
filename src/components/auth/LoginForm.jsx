@@ -1,19 +1,19 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import Cookies from 'js-cookie'; // Import the 'js-cookie' library
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Fixed the state variable
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
-  const tokenApiUrl = 'http://192.168.1.2:8001/create-listing';
+  const tokenApiUrl = 'http://170.64.158.74:8000/api/token/';
 
   const handleLogin = async () => {
     const credentials = {
       email,
       password,
     };
-
     try {
       const response = await fetch(tokenApiUrl, {
         method: 'POST',
@@ -26,18 +26,21 @@ const LoginForm = () => {
       if (response.ok) {
         const data = await response.json();
         const accessKey = data.access;
-        localStorage.setItem('access_token', accessKey);
-        setIsLoggedIn(true); // Set the login state to true
-        navigate("/property");
-        // Avoid using window.location.reload() here unless there's a specific reason to do so
-        window.location.reload();
+
+        // Set access token in cookies
+        Cookies.set('access_token', accessKey, { expires: 1 }); // Adjust the expiration as needed
+
+        setIsLoggedIn(true);
+        navigate('/property');
       } else {
-        console.log("Login failed");
+        console.log('Login failed');
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     }
   };
+/* */
+    
 
   return (
     <div>

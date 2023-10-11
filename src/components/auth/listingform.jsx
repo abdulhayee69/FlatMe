@@ -28,7 +28,7 @@ const ListingForm = () => {
   };
 
   const createListing = async () => {
-    const apiUrl = "http://localhost:8081/create-listing";
+    const apiUrl = "http://170.64.158.74:8000/api/listing/manage";
 
     // Prepare the data to be sent in the request
     const data = {
@@ -59,7 +59,7 @@ const ListingForm = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+          "Authorization": `JWT ${accessToken}`,
         },
         body: JSON.stringify(data),
       });

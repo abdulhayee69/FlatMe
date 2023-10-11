@@ -8,7 +8,7 @@ const SignupForm = () => {
   const [password, setPassword] = useState('');
   const [isRealtor] = useState("True");
   const navigate = useNavigate();
-  const signupApiUrl = 'http://192.168.1.2:8000/auth/user/register';
+  const signupApiUrl = 'http://170.64.158.74:8000/auth/user/register';
 
   const handleSignup = async () => {
     const userData = {
