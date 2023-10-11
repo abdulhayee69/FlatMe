@@ -5,8 +5,18 @@ const ListingForm = () => {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("New Zealand");
+  const [zipcode, setZipcode] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [bedrooms, setBedrooms] = useState("");
+  const [bathrooms, setBathrooms] = useState("");
+  const [saleType, setSaleType] = useState("");
+  const [homeType, setHomeType] = useState("");
   const [images, setImages] = useState([]);
   const [mainImage, setMainImage] = useState(null);
+  const [isPublished,setIsPublished] = useState("isPublished");
 
   const handleFileChange = (e, fieldName) => {
     const file = e.target.files[0];
@@ -23,10 +33,16 @@ const ListingForm = () => {
     formData.append("slug", slug);
     formData.append("address", address);
     formData.append("city", city);
-    formData.append("state", state);
+    formData.append("country", country);
     formData.append("zipcode", zipcode);
     formData.append("description", description);
-    formData.append
+    formData.append("price", price);
+    formData.append("bedrooms", bedrooms);
+    formData.append("bathrooms", bathrooms);
+    formData.append("saleType", saleType);
+    formData.append("homeType", homeType);
+    formData.append("is_published", isPublished );
+
 
 
     formData.append("mainImage", mainImage);
