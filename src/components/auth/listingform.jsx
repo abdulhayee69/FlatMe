@@ -8,16 +8,16 @@ const ListingForm = () => {
     file4: null,
   });
 
-  const [title, setTitle] = useState('');
-  const [country, setCountry] = useState('New Zealand');
-  const [city, setCity] = useState('northland');
-  const [zipcode, setZipcode] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
-  const [bedrooms, setBedrooms] = useState('');
-  const [bathrooms, setBathrooms] = useState('');
-  const [saleType, setSaleType] = useState('FOR_RENT');
-  const [homeType, setHomeType] = useState('ROOM');
+  const [title, setTitle] = useState("");
+  const [country, setCountry] = useState("New Zealand");
+  const [city, setCity] = useState("northland");
+  const [zipcode, setZipcode] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [bedrooms, setBedrooms] = useState("");
+  const [bathrooms, setBathrooms] = useState("");
+  const [saleType, setSaleType] = useState("FOR_RENT");
+  const [homeType, setHomeType] = useState("ROOM");
 
   const handleFileChange = (e, field) => {
     const selectedFile = e.target.files[0];
@@ -28,7 +28,7 @@ const ListingForm = () => {
   };
 
   const createListing = async () => {
-    const apiUrl = 'http://192.168.1.2:8000/api/listing/manage';
+    const apiUrl = "http://localhost:8081/create-listing";
 
     // Prepare the data to be sent in the request
     const data = {
@@ -36,7 +36,7 @@ const ListingForm = () => {
       slug: title, // You can set slug as the title for simplicity
       address: `${country}, ${city} ${zipcode}`,
       city,
-      state: 'Your State', // Replace with your state
+      state: "Your State", // Replace with your state
       zipcode,
       description,
       price,
@@ -52,14 +52,14 @@ const ListingForm = () => {
     };
 
     // Retrieve the access token from local storage
-    const accessToken = localStorage.getItem('access_token');
+    const accessToken = localStorage.getItem("access_token");
 
     try {
       const response = await fetch(apiUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(data),
       });
@@ -67,17 +67,15 @@ const ListingForm = () => {
       if (response.ok) {
         console.log(accessToken);
         // Listing creation successful, handle it as needed
-        alert('Listing created successfully');
+        alert("Listing created successfully");
       } else {
         console.log(accessToken);
         // Handle listing creation error
-        alert('Listing creation failed');
+        alert("Listing creation failed");
       }
     } catch (error) {
-        console.log(accessToken);
-        alert(`Bearer ${accessToken}`)
-      // Handle any network or other errors
-      alert('Error: ' + error.message);
+      console.log(accessToken);
+      console.error(error);
     }
   };
 
@@ -104,7 +102,6 @@ const ListingForm = () => {
               className="border-4 w-[700px] flex items-center pl-4 text-black rounded-xl  h-12"
               value={country}
               onChange={(e) => setCountry(e.target.value)}
-
             >
               New Zealand
             </div>
@@ -193,9 +190,11 @@ const ListingForm = () => {
             <p className="pb-2 dark:text-black">Type</p>
             <select
               type="text"
-              className="border-4 w-[700px] text-black rounded-xl  input h-12"
+              className="border-4 w-[700px] text-black rounded-xl input h-12"
+              value={saleType}
+              onChange={(e) => setSaleType(e.target.value)}
             >
-              <option value={saleType} onChange={(e) => setSaleType(e.target.value)}>For Rent</option>
+              <option value="FOR_RENT">For Rent</option>
             </select>
           </div>
 
@@ -203,7 +202,7 @@ const ListingForm = () => {
             <p className="pb-2 dark:text-black">Home Type</p>
             <select
               type="text"
-              className="border-4 w-[700px] text-black rounded-xl  input h-12"
+              className="border-4 w-[700px] text-black rounded-xl input h-12"
               value={homeType}
               onChange={(e) => setHomeType(e.target.value)}
             >
@@ -253,11 +252,14 @@ const ListingForm = () => {
           </div>
         </div>
         <div className="flex text-white justify-center items-center">
-        <button className="py-2 px-6 mb-8 rounded-lg bg-orange-500"
-        onClick={createListing}>SUBMIT</button>
+          <button
+            className="py-2 px-6 mb-8 rounded-lg bg-orange-500"
+            onClick={createListing}
+          >
+            SUBMIT
+          </button>
+        </div>
       </div>
-      </div>
-      
     </div>
   );
 };
