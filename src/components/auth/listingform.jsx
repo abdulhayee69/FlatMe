@@ -1,67 +1,54 @@
 import React, { useState } from "react";
-import axios from "axios";
 
 const ListingForm = () => {
   const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
+  const [slug] = useState(`${title}`);
+  const [address] = useState("");
+  const [city, setCity] = useState("Northland");
   const [country, setCountry] = useState("New Zealand");
   const [zipcode, setZipcode] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [bedrooms, setBedrooms] = useState("");
   const [bathrooms, setBathrooms] = useState("");
-  const [saleType, setSaleType] = useState("");
-  const [homeType, setHomeType] = useState("");
-  const [images, setImages] = useState([]);
-  const [mainImage, setMainImage] = useState(null);
-  const [isPublished,setIsPublished] = useState("isPublished");
+  const [saleType, setSaleType] = useState("Rent");
+  const [homeType, setHomeType] = useState("Room");
+  const [isPublished] = useState("isPublished");
 
-  const handleFileChange = (e, fieldName) => {
-    const file = e.target.files[0];
-    if (fieldName === "mainImage") {
-      setMainImage(file);
-    } else {
-      setImages([...images, { name: file.name, file }]);
-    }
-  };
+  const createListing = () => {
+    const data = {
+      title,
+      slug,
+      address,
+      city,
+      country,
+      zipcode,
+      description,
+      price,
+      bedrooms,
+      bathrooms,
+      saleType,
+      homeType,
+      is_published: isPublished,
+    };
 
-  const createListing = async () => {
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("slug", slug);
-    formData.append("address", address);
-    formData.append("city", city);
-    formData.append("country", country);
-    formData.append("zipcode", zipcode);
-    formData.append("description", description);
-    formData.append("price", price);
-    formData.append("bedrooms", bedrooms);
-    formData.append("bathrooms", bathrooms);
-    formData.append("saleType", saleType);
-    formData.append("homeType", homeType);
-    formData.append("is_published", isPublished );
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // Set the content type to JSON
+      },
+      body: JSON.stringify(data),
+    };
 
-
-
-    formData.append("mainImage", mainImage);
-    images.forEach((image, index) => {
-      formData.append(`image${index + 1}`, image.file);
-    });
-
-    try {
-      const response = await axios.post("http://localhost:3000/listings", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+    fetch("http://localhost:8081/listings", options)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Data submitted successfully: " + JSON.stringify(data));
+      })
+      .catch((error) => {
+        console.error("Error submitting data: " + error);
       });
-      console.log("Data submitted successfully: " + response.data);
-    } catch (error) {
-      console.error("Error submitting data: " + error);
-    }
   };
-
 
   return (
     <div>
@@ -194,14 +181,13 @@ const ListingForm = () => {
               <option value="APARTMENT">Apartment</option>
             </select>
           </div>
-          <input type="file" accept=".jpg, .png, .jpeg" onChange={(e) => handleFileChange(e, "mainImage")} />
-          {images.map((image, index) => (
-        <div key={index}>
-          <p>Additional Image {index + 1}</p>
-          <input type="file" accept=".jpg, .png, .jpeg" onChange={(e) => handleFileChange(e, `image${index}`)} />
-        </div>
-      ))}
-        </div>
+
+          <form action="/upload" method="POST" enctype="multipart/form-data">
+    <input type="file" name="image" />
+    <button type="submit">Upload</button>
+  </form>
+        
+        </div> 
         <div className="flex text-white justify-center items-center">
           <button
             className="py-2 px-6 mb-8 rounded-lg bg-orange-500"

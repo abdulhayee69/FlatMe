@@ -6,7 +6,7 @@ export const navLinks = [
   },
   {
     id: 4,
-    linkText: "Property",
+    linkText: "listing",
     url: "/property",
   },
   {

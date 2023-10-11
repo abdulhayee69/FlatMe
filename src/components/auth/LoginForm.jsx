@@ -7,7 +7,7 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
-  const tokenApiUrl = 'http://170.64.158.74:8000/api/token/';
+  const tokenApiUrl = 'http://170.64.158.74:8001/api/token/';
 
   const handleLogin = async () => {
     const credentials = {

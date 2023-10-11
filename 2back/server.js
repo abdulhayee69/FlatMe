@@ -1,16 +1,19 @@
-const express = require("express");
-const mysql = require("mysql");
-const bodyParser = require("body-parser");
-
+const express = require('express');
+const mysql = require('mysql');
+const multer = require('multer');
+const path = require('path');
 const app = express();
-const port = 3000;
+
+// Middleware to parse JSON and form data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // MySQL database connection
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
-  database: "allListing",
+  database: "alllisting",
 });
 
 db.connect((err) => {
@@ -21,19 +24,66 @@ db.connect((err) => {
   console.log("Connected to the database");
 });
 
-// Middleware setup
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+const storage = multer.diskStorage({
+  destination: './uploads/', // Set the folder where uploaded images will be stored
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  },
+});
 
+const upload = multer({
+  storage: storage,
+});
+
+// Define an endpoint for uploading images
+app.post('/upload', upload.single('image'), (req, res) => {
+  const { originalname, buffer } = req.file;
+
+  // Insert the image data into the database
+  const sql = 'INSERT INTO images (name, image_data) VALUES (?, ?)';
+  db.query(sql, [originalname, buffer], (err, result) => {
+    if (err) {
+      console.error('Error inserting image into the database: ' + err);
+      res.status(500).json({ error: 'Error inserting image' });
+    } else {
+      res.status(201).json({ message: 'Image uploaded and inserted successfully' });
+    }
+  });
+});
 // Create a new listing (POST request)
 app.post("/listings", (req, res) => {
-  const { title, slug, address, city, state, zipcode, description, price, bedrooms, bathrooms, sale_type, home_type } = req.body;
-
-  const query = "INSERT INTO listings (title, slug, address, city, state, zipcode, description, price, bedrooms, bathrooms, sale_type, home_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  const {
+    title,
+    country,
+    city,
+    zipcode,
+    description,
+    price,
+    bedrooms,
+    bathrooms,
+    saleType,
+    homeType,
+  } = req.body;
+    const slug = title;
+    const address = `${city} ${country}`
+  const query =
+    "INSERT INTO listings (title, slug, address, city, zipcode, description, price, bedrooms, bathrooms, saleType, homeType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
   db.query(
     query,
-    [title, slug, address, city, state, zipcode, description, price, bedrooms, bathrooms, sale_type, home_type],
+    [
+      title,
+      slug,
+      address,
+      city,
+      zipcode,
+      description,
+      price,
+      bedrooms,
+      bathrooms,
+      saleType,
+      homeType,
+    ],
     (err, result) => {
       if (err) {
         console.error("Error creating listing: " + err);
@@ -45,20 +95,10 @@ app.post("/listings", (req, res) => {
   );
 });
 
-// Get all listings (GET request)
-app.get("/listings", (req, res) => {
-  const query = "SELECT * FROM listings";
+app.get("/getList", (req,res)=> {
+  const query = "SELECT * FROM listings"
+})
 
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error fetching listings: " + err);
-      res.status(500).json({ error: "Error fetching listings" });
-      return;
-    }
-    res.status(200).json(results);
-  });
-});
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+app.listen(8081, () => {
+  console.log("Server is running on port 8081");
 });
