@@ -5,11 +5,6 @@ export const navLinks = [
     url: "/",
   },
   {
-    id: 2,
-    linkText: "About Us",
-    url: "/about-us",
-  },
-  {
     id: 4,
     linkText: "Property",
     url: "/property",

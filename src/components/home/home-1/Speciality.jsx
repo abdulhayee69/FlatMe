@@ -1,6 +1,7 @@
 import hi from "../../../assets/hi.png";
 import group from "../../../assets/group.png";
 import couple from "../../../assets/couple.png"
+import kiwi from "../../../assets/Kiwi.png"
 
 const Speciality = () => {
   return (
@@ -63,12 +64,25 @@ const Speciality = () => {
         </div>
       </div>
       <div className="flex gap-24">
-        <div className="p-24 border-black border-8">Left</div>
-        <div className="p-24 border-black border-8">Right</div>
-      </div>
-      <div className="flex gap-24">
-        <div className="p-24 border-black border-8">Left</div>
-        <div className="p-24 border-black border-8">Right</div>
+      <div className="p-12">
+          <img src={kiwi} className="w-[500px]" alt="group" />
+        </div>
+        <div className="flex flex-col p-4 justify-center items-right">
+          <h1 className="text-5xl font-bold">
+          Kiwi owned.
+          </h1>
+          <br />
+          <p className="text-xl">
+          Our service is built and run by a small group of
+            <br />
+            passionate Kiwis who just wanted to build
+            <br />
+            something cool and make a difference. We’d love<br />
+            to earn a living doing what we do but for now our<br />
+            service is completely free. We hope you enjoy<br />
+            and help spread the word.
+          </p>
+        </div>
       </div>
     </div>
   );

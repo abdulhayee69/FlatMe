@@ -1,17 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FiDelete, FiMoon, FiSun } from "react-icons/fi";
-import { BiSearch, BiMenu, BiUser, BiBuildingHouse } from "react-icons/bi";
+import { BiSearch, BiMenu, BiLogOut, BiBuildingHouse } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-
-import {
-  closeDropdown,
-  closeSidebar,
-  openSidebar,
-  toggleDarkMode,
-  uiStore,
-} from "../../features/uiSlice";
+import { closeDropdown, closeSidebar, openSidebar, toggleDarkMode, uiStore } from "../../features/uiSlice";
 import { navLinks } from "../../data/navLinks";
 import SingleLink from "./SingleLink";
 
@@ -22,6 +14,21 @@ const Navbar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const access_token = localStorage.getItem('access_token');
+    if (access_token) {
+      setIsLoggedIn(true);
+      
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('access_token'); // Clear the access token from local storage
+    setIsLoggedIn(false);
+    navigate("/login")
+  };
 
   // Dark mode toggle
   const handleDarkMode = () => {
@@ -33,7 +40,7 @@ const Navbar = () => {
     if (darkMode) rootDoc.classList.add("dark");
     else rootDoc.classList.remove("dark");
     localStorage.setItem("Martvilla-theme-mode", JSON.stringify(darkMode));
-  }, [darkMode]);
+  });
 
   const handleClose = (e) => {
     if (!e.target.classList.contains("link")) {
@@ -57,20 +64,23 @@ const Navbar = () => {
     >
       <Link to="/" className="flex-shrink-0 flex-align-center gap-x-1">
         <BiBuildingHouse className="text-3xl text-primary" />
-        <h1 className="hidden md:block">MartVilla</h1>
+        <h1 className="hidden md:block">Flatme</h1>
       </Link>
 
       <div className="flex-align-center gap-x-4">
         {/*-------------------------------------- Desktop Menu------------------------------------- */}
-        <ul
-          className={`hidden md:flex-align-center ${
-            showSearchBar && "!hidden"
-          }`}
-        >
-          {navLinks.map((link) => (
-            <SingleLink {...link} key={link.id} />
-          ))}
-        </ul>
+        {isLoggedIn ? (
+          <Link to="/create-listing" className="link border-orange-500 border-1 p-1">
+            Create Listing
+            
+          </Link>
+        ) : (
+          <ul className={`hidden md:flex-align-center ${showSearchBar && "!hidden"}`}>
+            {navLinks.map((link) => (
+              <SingleLink {...link} key={link.id} />
+            ))}
+          </ul>
+        )}
 
         {/*---------------------------------------- Mobile Menu------------------------------------- */}
         <div
@@ -158,8 +168,8 @@ const Navbar = () => {
             {darkMode ? <FiSun /> : <FiMoon />}
           </div>
           {/*----------------------------- Profile Icon-------------------------------------------------- */}
-          <div className="bg-white shadow-md icon-box dark:bg-dark-light hover:shadow-lg hover:bg-transparent">
-            <BiUser />
+          <div onClick={handleLogout} className="bg-white shadow-md icon-box dark:bg-dark-light hover:shadow-lg hover:bg-transparent">
+            <BiLogOut />
           </div>
           {/*------------------------------- Mobile Menu Toogle------------------------- */}
           <div

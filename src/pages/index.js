@@ -7,3 +7,4 @@ export { default as Team } from "./Team";
 export { default as SignUp } from "./SignUp";
 export { default as PropertyDetails } from "./PropertyDetails";
 export { default as PageNotFound } from "./PageNotFound";
+export { default as CreateListing} from "./CreateListing";

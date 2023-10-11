@@ -13,6 +13,7 @@ import {
   Login,
   SignUp,
   PropertyDetails,
+  CreateListing,
 } from "./pages";
 
 import Loader from "./components/common/Loader";
@@ -54,11 +55,12 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/property-details" element={<PropertyDetails />} />
           <Route path="/prod-dets" element={<ProductDetails />} />
+          <Route path="/create-listing" element={<CreateListing />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </div>
       <div className="px-[2%] md:px-[6%] bg-card-dark border border-card-dark">
-        <div className="mt-20">
+        <div>
           <Footer />
         </div>
       </div>
