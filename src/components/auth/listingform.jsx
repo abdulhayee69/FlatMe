@@ -1,6 +1,51 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 const ListingForm = () => {
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [address, setAddress] = useState("");
+  const [images, setImages] = useState([]);
+  const [mainImage, setMainImage] = useState(null);
+
+  const handleFileChange = (e, fieldName) => {
+    const file = e.target.files[0];
+    if (fieldName === "mainImage") {
+      setMainImage(file);
+    } else {
+      setImages([...images, { name: file.name, file }]);
+    }
+  };
+
+  const createListing = async () => {
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("slug", slug);
+    formData.append("address", address);
+    formData.append("city", city);
+    formData.append("state", state);
+    formData.append("zipcode", zipcode);
+    formData.append("description", description);
+    formData.append
+
+
+    formData.append("mainImage", mainImage);
+    images.forEach((image, index) => {
+      formData.append(`image${index + 1}`, image.file);
+    });
+
+    try {
+      const response = await axios.post("http://localhost:3000/listings", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("Data submitted successfully: " + response.data);
+    } catch (error) {
+      console.error("Error submitting data: " + error);
+    }
+  };
+
 
   return (
     <div>
@@ -133,46 +178,13 @@ const ListingForm = () => {
               <option value="APARTMENT">Apartment</option>
             </select>
           </div>
-
-          <div className="mt-6">
-            <p className="pb-2 dark:text-black">Main Image</p>
-            <input
-              type="file"
-              className="border-4 w-[700px] text-black rounded-xl  input h-12"
-              accept=".jpg, .png, .jpeg"
-              onChange={(e) => handleFileChange(e, "file1")}
-            />
-          </div>
-
-          <div className="mt-6">
-            <p className="pb-2 dark:text-black">1st Image</p>
-            <input
-              type="file"
-              accept=".jpg, .png, .jpeg"
-              className="border-4 w-[700px] text-black rounded-xl  input h-12"
-              onChange={(e) => handleFileChange(e, "file3")}
-            />
-          </div>
-
-          <div className="mt-6">
-            <p className="pb-2 dark:text-black">2nd Image</p>
-            <input
-              type="file"
-              accept=".jpg, .png, .jpeg"
-              className="border-4 w-[700px] text-black rounded-xl  input h-12"
-              onChange={(e) => handleFileChange(e, "file3")}
-            />
-          </div>
-
-          <div className="mt-6">
-            <p className="pb-2 dark:text-black">3rd Image</p>
-            <input
-              type="file"
-              accept=".jpg, .png, .jpeg"
-              className="border-4 w-[700px] text-black rounded-xl  input h-12"
-              onChange={(e) => handleFileChange(e, "file4")}
-            />
-          </div>
+          <input type="file" accept=".jpg, .png, .jpeg" onChange={(e) => handleFileChange(e, "mainImage")} />
+          {images.map((image, index) => (
+        <div key={index}>
+          <p>Additional Image {index + 1}</p>
+          <input type="file" accept=".jpg, .png, .jpeg" onChange={(e) => handleFileChange(e, `image${index}`)} />
+        </div>
+      ))}
         </div>
         <div className="flex text-white justify-center items-center">
           <button

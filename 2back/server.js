@@ -1,19 +1,16 @@
-
 const express = require("express");
-const bodyParser = require("body-parser");
 const mysql = require("mysql");
-const fileUpload = require("express-fileupload");
+const bodyParser = require("body-parser");
+
 const app = express();
+const port = 3000;
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(fileUpload());
-
+// MySQL database connection
 const db = mysql.createConnection({
-  host: "http://170.64.158.74",
-  user: "root",
-  password: "",
-  database: "allListings",
+  host: "your_database_host",
+  user: "your_database_user",
+  password: "your_database_password",
+  database: "your_database_name",
 });
 
 db.connect((err) => {
@@ -24,28 +21,44 @@ db.connect((err) => {
   console.log("Connected to the database");
 });
 
+// Middleware setup
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-app.post("/upload", (req, res) => {
-  if (!req.files) {
-    return res.status(400).send("No files were uploaded.");
-  }
+// Create a new listing (POST request)
+app.post("/listings", (req, res) => {
+  const { title, slug, address, city, state, zipcode, description, price, bedrooms, bathrooms, sale_type, home_type } = req.body;
 
-  const image = req.files.image; 
+  const query = "INSERT INTO listings (title, slug, address, city, state, zipcode, description, price, bedrooms, bathrooms, sale_type, home_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-  const listingData = req.body;
-
-  db.query("INSERT INTO listings SET ?", listingData, (err, results) => {
-    if (err) {
-      console.error("Error inserting data: " + err);
-      return res.status(500).send("Error inserting data.");
+  db.query(
+    query,
+    [title, slug, address, city, state, zipcode, description, price, bedrooms, bathrooms, sale_type, home_type],
+    (err, result) => {
+      if (err) {
+        console.error("Error creating listing: " + err);
+        res.status(500).json({ error: "Error creating listing" });
+        return;
+      }
+      res.status(201).json({ message: "Listing created successfully" });
     }
+  );
+});
 
-    return res.status(200).send("Data inserted successfully.");
+// Get all listings (GET request)
+app.get("/listings", (req, res) => {
+  const query = "SELECT * FROM listings";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching listings: " + err);
+      res.status(500).json({ error: "Error fetching listings" });
+      return;
+    }
+    res.status(200).json(results);
   });
 });
 
-
-const port = 8080;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
